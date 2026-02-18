@@ -29,12 +29,27 @@ const uploadFile= asyncHandler( async (req,res)=>{
     )
 })
 
-const getFiles= asyncHandler( async (req,res)=>{
-    const files= await File.find({uploadedBy: req.user._id}).sort({createdAt: -1})
-    return res.status(200).json(
-        new ApiResponse(200,files,"Files fetched successfully")
-    )
-})
+const getFiles = asyncHandler(async (req, res) => {
+
+  let files;
+
+  if (req.user.role === "admin") {
+    // Admin sees all files with user details
+    files = await File.find()
+      .populate("uploadedBy", "name email") // populate uploadedBy with user's name and email
+      .sort({ createdAt: -1 });
+
+  } else {
+    // Normal user sees only their files
+    files = await File.find({ uploadedBy: req.user._id })
+      .sort({ createdAt: -1 });
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, files, "Files fetched successfully")
+  );
+});
+
 
 const deleteFile= asyncHandler( async (req,res)=>{  // only admin can delete any file, user can delete only their own files
     console.log("File ID to delete:", fileId);
