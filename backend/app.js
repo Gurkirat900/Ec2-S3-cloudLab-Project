@@ -2,6 +2,7 @@ import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 import authRoutes from "./routes/authRoutes.js"
+import fileRoutes from "./routes/fileRoutes.js"
 
 const app= express()
 
@@ -13,5 +14,6 @@ app.use(express.static("public"))              // allows app to accept files/fol
 app.use(cookieParser())                            // allows app to use and store cookies entered by user
 
 app.use("/api/v1/auth",authRoutes)          // all routes related to authentication will start with /api/auth
+app.use("/api/v1/files",fileRoutes)          // all routes related to file operations will start with /api/files
 
 export {app}
