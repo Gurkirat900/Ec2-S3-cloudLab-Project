@@ -1,6 +1,7 @@
 import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
+import authRoutes from "./routes/authRoutes.js"
 
 const app= express()
 
@@ -10,5 +11,7 @@ app.use(express.json({limit:"20kb"}))       // allows app to accept data in json
 app.use(express.urlencoded({extended:true,limit:"20kb"}))            // allows server to accept url links
 app.use(express.static("public"))              // allows app to accept files/folders=> in this case "public" folder
 app.use(cookieParser())                            // allows app to use and store cookies entered by user
+
+app.use("/api/v1/auth",authRoutes)          // all routes related to authentication will start with /api/auth
 
 export {app}
