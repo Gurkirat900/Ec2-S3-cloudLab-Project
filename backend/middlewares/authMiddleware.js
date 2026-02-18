@@ -17,6 +17,7 @@ export const verifyJWT= asyncHandler(async (req,res,next)=>{
      }
  
      const decodedToken= jwt.verify(token,process.env.JWT_SECRET_KEY)
+        console.log("Decoded token:", decodedToken)
      const user= await User.findById(decodedToken?._id).select('_id name email role')
     
      if(!user){
