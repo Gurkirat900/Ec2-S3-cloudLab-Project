@@ -113,6 +113,8 @@ const getFileVerssions= asyncHandler( async (req,res)=>{
 
 const dowmloadFile= asyncHandler( async (req,res)=>{
     const fileId= req.params.fileId;
+    const versionId= req.query.versionId; // versionId is passed as query parameter to download specific version of file, if not provided latest version will be downloaded
+
     const file= await File.findById(fileId)
     if(!file){
         throw new ApiError(404,"File not found")
@@ -122,16 +124,22 @@ const dowmloadFile= asyncHandler( async (req,res)=>{
         throw new ApiError(403,"You do not have permission to download this file")
     }
 
-    const s3Object= await s3.getObject({
+    const params= {
         Bucket: process.env.AWS_S3_BUCKET_NAME,
         Key: file.s3Key,
-    }).promise()
+    }
+
+    if(versionId){   // if versionId is provided, add it to params to download specific version of file
+        params.VersionId= versionId
+    }
+    const s3Object= await s3.getObject(params).promise()
+
 
     // set headers
     res.setHeader("Content-Disposition", `attachment; filename="${file.filename}"`)
     res.setHeader("Content-Type", s3Object.ContentType)
 
-    return res.status(200).send(s3Object.Body)
+    return res.status(200).send(s3Object.Body)  // send file data as response(we do not use ApiResponse here because we are sending file data as response, not json=> ApiResponse is used to send json response)
 })
 
 export { uploadFile, getFiles, deleteFile, getFileVerssions, dowmloadFile}
