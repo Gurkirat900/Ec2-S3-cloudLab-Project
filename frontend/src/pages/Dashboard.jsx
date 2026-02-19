@@ -90,7 +90,7 @@ function Dashboard({ setToken }) {
     }
   };
 
-  const handleDownloadSpecific = async (fileId, versionId) => {
+  const handleDownloadSpecific = async (fileId, versionId, filename) => {
     try {
       const response = await api.get(
         `/files/download/${fileId}?versionId=${versionId}`,
@@ -100,7 +100,7 @@ function Dashboard({ setToken }) {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "file");
+      link.setAttribute("download", filename || "file");
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -240,6 +240,7 @@ function Dashboard({ setToken }) {
                               handleDownloadSpecific(
                                 selectedFileId,
                                 version.VersionId,
+                                file.filename
                               )
                             }
                             className="bg-blue-600 px-3 py-1 rounded text-sm hover:bg-blue-700"
