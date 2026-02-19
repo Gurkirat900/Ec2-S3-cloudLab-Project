@@ -131,9 +131,7 @@ const dowmloadFile= asyncHandler( async (req,res)=>{
     res.setHeader("Content-Disposition", `attachment; filename="${file.filename}"`)
     res.setHeader("Content-Type", s3Object.ContentType)
 
-    return res.status(200).send(s3Object.Body).json(
-        new ApiResponse(200,null,"File downloaded successfully")
-    )
+    return res.status(200).send(s3Object.Body)
 })
 
 export { uploadFile, getFiles, deleteFile, getFileVerssions, dowmloadFile}
