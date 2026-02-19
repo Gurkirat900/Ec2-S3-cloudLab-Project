@@ -92,6 +92,7 @@ function Dashboard({ setToken }) {
         filename: file.filename,
       });
     } catch (error) {
+        console.error(error);
       alert("Failed to fetch versions");
     }
   };
