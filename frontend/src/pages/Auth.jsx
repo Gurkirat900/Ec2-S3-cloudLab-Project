@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 
-function Auth() {
+function Auth({setToken}) {
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -18,6 +18,7 @@ function Auth() {
       });
 
       localStorage.setItem("token", res.data.data.token);
+      setToken(res.data.data.token);
       navigate("/dashboard");
 
     } else {
@@ -28,6 +29,7 @@ function Auth() {
       });
 
       localStorage.setItem("token", res.data.data.token);
+      setToken(res.data.data.token);
       navigate("/dashboard");
     }
   } catch (error) {
