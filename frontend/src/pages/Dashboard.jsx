@@ -8,6 +8,8 @@ function Dashboard({ setToken }) {
   const [uploading, setUploading] = useState(false);
   const [versions, setVersions] = useState([]);
   const [selectedFileId, setSelectedFileId] = useState(null);
+  const [selectedFileInfo, setSelectedFileInfo] = useState(null);
+
 
   useEffect(() => {
     fetchFiles();
@@ -80,11 +82,14 @@ function Dashboard({ setToken }) {
     }
   };
 
-  const handleVersions = async (fileId) => {
+  const handleVersions = async (file) => {
     try {
-      const res = await api.get(`/files/versions/${fileId}`);
+      const res = await api.get(`/files/versions/${file._id}`);
       setVersions(res.data.data);
-      setSelectedFileId(fileId);
+      setSelectedFileInfo({
+        id: file._id,
+        filename: file.filename,
+      });
     } catch (error) {
       alert("Failed to fetch versions");
     }
@@ -97,7 +102,7 @@ function Dashboard({ setToken }) {
         { responseType: "blob" },
       );
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const url = window.URL.createObjectURL(response.data);
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", filename || "file");
@@ -183,7 +188,7 @@ function Dashboard({ setToken }) {
                         </button>
 
                         <button
-                          onClick={() => handleVersions(file._id)}
+                          onClick={() => handleVersions(file)}
                           className="bg-gray-600 px-3 py-1 rounded text-sm hover:bg-gray-700"
                         >
                           Versions
@@ -240,7 +245,7 @@ function Dashboard({ setToken }) {
                               handleDownloadSpecific(
                                 selectedFileId,
                                 version.VersionId,
-                                file.filename
+                                selectedFileInfo?.filename,
                               )
                             }
                             className="bg-blue-600 px-3 py-1 rounded text-sm hover:bg-blue-700"
