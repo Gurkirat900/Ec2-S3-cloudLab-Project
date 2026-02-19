@@ -86,7 +86,7 @@ function Dashboard({ setToken }) {
     try {
       const res = await api.get(`/files/versions/${file._id}`);
       setVersions(res.data.data);
-      selectedFileId(file._id);
+      setSelectedFileId(file._id);
       setSelectedFileInfo({
         id: file._id,
         filename: file.filename,
