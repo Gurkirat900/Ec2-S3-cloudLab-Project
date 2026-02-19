@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 
-function Dashboard({setToken}) {
+function Dashboard({ setToken }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetchFiles();
@@ -17,6 +19,34 @@ function Dashboard({setToken}) {
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      alert("Please select a file");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      setUploading(true);
+
+      await api.post("/files/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      alert("File uploaded successfully");
+      setSelectedFile(null);
+      fetchFiles(); // refresh list
+    } catch (error) {
+      alert(error.response?.data?.message || "Upload failed");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -43,8 +73,18 @@ function Dashboard({setToken}) {
         <div className="bg-[#1e293b] rounded-xl p-6 border border-gray-700 mb-8">
           <h2 className="text-lg font-semibold mb-4">Upload File</h2>
 
-          <button className="bg-blue-600 px-6 py-3 rounded-lg hover:bg-blue-700 transition">
-            Choose File
+          <input
+            type="file"
+            onChange={(e) => setSelectedFile(e.target.files[0])}
+            className="mb-4 text-sm text-gray-300"
+          />
+
+          <button
+            onClick={handleUpload}
+            disabled={uploading}
+            className="bg-blue-600 px-6 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+          >
+            {uploading ? "Uploading..." : "Upload"}
           </button>
         </div>
 

@@ -3,6 +3,8 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import authRoutes from "./routes/authRoutes.js"
 import fileRoutes from "./routes/fileRoutes.js"
+import path from "path"
+import { fileURLToPath } from "url"
 
 const app= express()
 
@@ -15,5 +17,23 @@ app.use(cookieParser())                            // allows app to use and stor
 
 app.use("/api/v1/auth",authRoutes)          // all routes related to authentication will start with /api/auth
 app.use("/api/v1/files",fileRoutes)          // all routes related to file operations will start with /api/files
+
+
+// ------------------- Serve React Frontend -------------------
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// adjust path 
+const frontendPath = path.join(__dirname, "../../frontend/dist");
+
+// Serve static files from React build
+app.use(express.static(frontendPath));
+
+// Handle React Router (important)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
+});
+
 
 export {app}
