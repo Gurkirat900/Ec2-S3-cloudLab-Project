@@ -1,10 +1,19 @@
+import { Routes, Route, Navigate } from "react-router-dom";
+import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
+
 function App() {
+  const token = localStorage.getItem("token");
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-white">
-        Secure Cloud IAM
-      </h1>
-    </div>
+    <Routes>
+      <Route path="/" element={<Navigate to="/auth" />} />
+      <Route path="/auth" element={<Auth />} />
+      <Route
+        path="/dashboard"
+        element={token ? <Dashboard /> : <Navigate to="/auth" />}
+      />
+    </Routes>
   );
 }
 
