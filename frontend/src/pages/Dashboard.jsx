@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import  toast  from "react-hot-toast";
 
 import Navbar from "../components/Navbar";
 import UploadSection from "../components/UploadSection";
@@ -25,10 +26,10 @@ function Dashboard({ setToken }) {
     }
   };
 
-  const handleUpload = async (file) => {
+  const handleUpload = async (file, setProgress) => {
     if (!file) {
-      alert("Please select a file");
-      return;
+      toast.error("Please select a file");
+      return false;
     }
 
     const formData = new FormData();
@@ -39,12 +40,20 @@ function Dashboard({ setToken }) {
 
       await api.post("/files/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (progressEvent) => {
+          const percent = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total,
+          );
+          setProgress(percent);
+        },
       });
 
-      alert("File uploaded successfully");
+      toast.success("File uploaded successfully ");
       fetchFiles();
+      return true;
     } catch (error) {
-      alert(error.response?.data?.message || "Upload failed");
+      toast.error(error.response?.data?.message || "Upload failed");
+      return false;
     } finally {
       setUploading(false);
     }
@@ -55,7 +64,7 @@ function Dashboard({ setToken }) {
       await api.delete(`/files/${fileId}`);
       setFiles((prev) => prev.filter((file) => file._id !== fileId));
     } catch (error) {
-      alert("Delete failed");
+      toast.error(error.response?.data?.message || "Delete failed");
     }
   };
 
@@ -77,7 +86,7 @@ function Dashboard({ setToken }) {
       link.click();
       link.remove();
     } catch (error) {
-      alert("Download failed");
+      toast.error(error.response?.data?.message || "Download failed");
     }
   };
 
@@ -86,10 +95,7 @@ function Dashboard({ setToken }) {
       <Navbar setToken={setToken} />
 
       <div className="p-6">
-        <UploadSection
-          onUpload={handleUpload}
-          uploading={uploading}
-        />
+        <UploadSection onUpload={handleUpload} uploading={uploading} />
 
         <FileTable
           files={files}

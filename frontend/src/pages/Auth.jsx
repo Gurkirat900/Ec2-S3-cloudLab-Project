@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import toast from "react-hot-toast";
 
 function Auth({setToken}) {
   const [isLogin, setIsLogin] = useState(true);
@@ -19,6 +20,7 @@ function Auth({setToken}) {
 
       localStorage.setItem("token", res.data.data.token);
       setToken(res.data.data.token);
+      toast.success("Logged in successfully ");
       navigate("/dashboard");
 
     } else {
@@ -30,10 +32,11 @@ function Auth({setToken}) {
 
       localStorage.setItem("token", res.data.data.token);
       setToken(res.data.data.token);
+      toast.success("Account created successfully ");
       navigate("/dashboard");
     }
   } catch (error) {
-    alert(error.response?.data?.message || "Something went wrong");
+    toast.error(error.response?.data?.message || "Something went wrong");
   }
 };
 
