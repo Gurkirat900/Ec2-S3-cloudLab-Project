@@ -10,9 +10,14 @@ function Dashboard({ setToken }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     fetchFiles();
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
   }, []);
 
   const fetchFiles = async () => {
@@ -92,7 +97,7 @@ function Dashboard({ setToken }) {
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-white">
-      <Navbar setToken={setToken} />
+      <Navbar setToken={setToken} user={user} />
 
       <div className="p-6">
         <UploadSection onUpload={handleUpload} uploading={uploading} />
@@ -102,6 +107,7 @@ function Dashboard({ setToken }) {
           loading={loading}
           onDelete={handleDelete}
           onDownload={handleDownload}
+          user={user}
         />
       </div>
     </div>

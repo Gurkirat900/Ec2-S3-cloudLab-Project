@@ -1,9 +1,11 @@
 import FileRow from "./FileRow";
 
-function FileTable({ files, loading, onDelete, onDownload }) {
+function FileTable({ files, loading, onDelete, onDownload, user }) {
   return (
     <div className="bg-[#1e293b] rounded-xl p-6 border border-gray-700">
-      <h2 className="text-lg font-semibold mb-4">Your Files</h2>
+      <h2 className="text-lg font-semibold mb-4">
+        {user?.role === "admin" ? "All Uploaded Files" : "Your Files"}
+      </h2>
 
       {loading ? (
         <p className="text-gray-400">Loading...</p>
@@ -16,6 +18,9 @@ function FileTable({ files, loading, onDelete, onDownload }) {
               <tr className="border-b border-gray-700 text-gray-400">
                 <th className="py-3">File Name</th>
                 <th className="py-3">Uploaded At</th>
+                {user?.role === "admin" && (
+                  <th className="py-3">Uploaded By</th>
+                )}
                 <th className="py-3">Actions</th>
               </tr>
             </thead>
@@ -26,6 +31,7 @@ function FileTable({ files, loading, onDelete, onDownload }) {
                   file={file}
                   onDelete={onDelete}
                   onDownload={onDownload}
+                  user={user}
                 />
               ))}
             </tbody>

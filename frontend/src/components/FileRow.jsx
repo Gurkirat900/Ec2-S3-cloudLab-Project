@@ -8,8 +8,7 @@ import {
   HiArchive,
 } from "react-icons/hi";
 
-
-function FileRow({ file, onDelete, onDownload }) {
+function FileRow({ file, onDelete, onDownload, user }) {
   const [open, setOpen] = useState(false);
   const [versions, setVersions] = useState([]);
   const [loadingVersions, setLoadingVersions] = useState(false);
@@ -73,6 +72,15 @@ function FileRow({ file, onDelete, onDownload }) {
           {new Date(file.createdAt).toLocaleString()}
         </td>
 
+        {user?.role === "admin" && (
+          <td className="py-3 text-gray-400">
+            <div>
+              <p className="text-sm font-medium">{file.uploadedBy?.name}</p>
+              <p className="text-xs text-gray-500">{file.uploadedBy?.email}</p>
+            </div>
+          </td>
+        )}
+
         <td className="py-3 flex gap-2">
           <button
             onClick={() => onDownload(file._id, file.filename)}
@@ -100,7 +108,7 @@ function FileRow({ file, onDelete, onDownload }) {
       {/* Dropdown Row */}
       {open && (
         <tr className="bg-[#0f172a]">
-          <td colSpan="3" className="p-4">
+          <td colSpan={user?.role === "admin" ? 4 : 3} className="p-4">
             {loadingVersions ? (
               <p className="text-gray-400">Loading versions...</p>
             ) : versions.length === 0 ? (
