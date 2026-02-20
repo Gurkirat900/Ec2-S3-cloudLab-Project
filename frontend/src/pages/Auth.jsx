@@ -33,6 +33,7 @@ function Auth({setToken}) {
 
       localStorage.setItem("token", res.data.data.token);
       setToken(res.data.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.data.user));
       toast.success("Account created successfully ");
       navigate("/dashboard");
     }
