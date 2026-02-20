@@ -13,7 +13,7 @@ function ChangePasswordModal({ onClose }) {
     try {
       setLoading(true);
 
-      await api.post("/api/v1/auth/change-password", form);
+      await api.post("/auth/change-password", form);
 
       toast.success("Password updated successfully");
       onClose();
